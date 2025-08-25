@@ -1,0 +1,92 @@
+class Nodo {
+    int valor;
+    Nodo izquierdo;
+    Nodo derecho;
+
+    public Nodo(int valor) {
+        this.valor = valor;
+        izquierdo = null;
+        derecho = null;
+    }
+}
+
+class Arbol {
+    Nodo raiz;
+
+    public Arbol() {
+        raiz = null;
+    }
+
+    public boolean vacio() {
+        return raiz == null;
+    }
+
+    // Insertar en el árbol (BST)
+    public void insertar(int valor) {
+        raiz = insertarRecursivo(raiz, valor);
+    }
+
+    private Nodo insertarRecursivo(Nodo actual, int valor) {
+        if (actual == null) {
+            return new Nodo(valor);
+        }
+        if (valor < actual.valor) {
+            actual.izquierdo = insertarRecursivo(actual.izquierdo, valor);
+        } else if (valor > actual.valor) {
+            actual.derecho = insertarRecursivo(actual.derecho, valor);
+        }
+        return actual;
+    }
+    public Nodo buscarNodo(int valor) {
+        return buscarRecursivo(raiz, valor);
+    }
+
+    private Nodo buscarRecursivo(Nodo actual, int valor) {
+        if (actual == null || actual.valor == valor) {
+            return actual;
+        }
+        if (valor < actual.valor) {
+            return buscarRecursivo(actual.izquierdo, valor);
+        } else {
+            return buscarRecursivo(actual.derecho, valor);
+        }
+    }
+    public void imprimirArbol() {
+        imprimirInorden(raiz);
+        System.out.println();
+    }
+
+    private void imprimirInorden(Nodo nodo) {
+        if (nodo != null) {
+            imprimirInorden(nodo.izquierdo);
+            System.out.print(nodo.valor + " ");
+            imprimirInorden(nodo.derecho);
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Arbol arbol = new Arbol();
+
+        arbol.insertar(50);
+        arbol.insertar(30);
+        arbol.insertar(70);
+        arbol.insertar(20);
+        arbol.insertar(40);
+        arbol.insertar(60);
+        arbol.insertar(80);
+
+        System.out.println("Árbol en inorden:");
+        arbol.imprimirArbol();
+
+        System.out.println("¿Árbol vacío?: " + arbol.vacio());
+
+        Nodo buscado = arbol.buscarNodo(40);
+        if (buscado != null) {
+            System.out.println("Nodo encontrado: " + buscado.valor);
+        } else {
+            System.out.println("Nodo no encontrado.");
+        }
+    }
+}
