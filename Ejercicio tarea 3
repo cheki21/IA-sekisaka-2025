@@ -1,0 +1,58 @@
+import java.util.*;
+
+public class DijkstraExample {
+    public static Map<String, Integer> dijkstra(Map<String, Map<String, Integer>> grafo, String origen) {
+        // Distancias mínimas (inicialmente infinito)
+        Map<String, Integer> distancias = new HashMap<>();
+        for (String nodo : grafo.keySet()) {
+            distancias.put(nodo, Integer.MAX_VALUE);
+        }
+        distancias.put(origen, 0);
+
+        // Cola de prioridad (menor distancia primero)
+        PriorityQueue<Map.Entry<String, Integer>> cola =
+                new PriorityQueue<>(Map.Entry.comparingByValue);
+
+        cola.add(new AbstractMap.SimpleEntry<>(origen, 0));
+
+        while (!cola.isEmpty()) {
+            String nodoActual = cola.poll().getKey();
+
+            // Revisar vecinos
+            for (Map.Entry<String, Integer> vecino : grafo.get(nodoActual).entrySet()) {
+                String nodoVecino = vecino.getKey();
+                int peso = vecino.getValue();
+
+                int nuevaDistancia = distancias.get(nodoActual) + peso;
+
+                // Si encontramos un camino más corto, actualizamos
+                if (nuevaDistancia < distancias.get(nodoVecino)) {
+                    distancias.put(nodoVecino, nuevaDistancia);
+                    cola.add(new AbstractMap.SimpleEntry<>(nodoVecino, nuevaDistancia));
+                }
+            }
+        }
+
+        return distancias;
+    }
+
+    public static void main(String[] args) {
+        // ----------------- EJEMPLO -----------------
+        Map<String, Map<String, Integer>> grafo = new HashMap<>();
+
+        grafo.put("A", Map.of("B", 4, "C", 2));
+        grafo.put("B", Map.of("A", 4, "C", 1, "D", 5));
+        grafo.put("C", Map.of("A", 2, "B", 1, "D", 8, "E", 10));
+        grafo.put("D", Map.of("B", 5, "C", 8, "E", 2, "Z", 6));
+        grafo.put("E", Map.of("C", 10, "D", 2, "Z", 3));
+        grafo.put("Z", Map.of("D", 6, "E", 3));
+
+        String origen = "A";
+        Map<String, Integer> resultado = dijkstra(grafo, origen);
+
+        System.out.println("Distancias mínimas desde " + origen + ":");
+        for (Map.Entry<String, Integer> entry : resultado.entrySet()) {
+            System.out.println(origen + " → " + entry.getKey() + ": " + entry.getValue());
+        }
+    }
+}
