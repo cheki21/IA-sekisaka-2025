@@ -1,15 +1,14 @@
 import java.util.*;
 
-public class DijkstraExample {
+public class tarea3 {
     public static Map<String, Integer> dijkstra(Map<String, Map<String, Integer>> grafo, String origen) {
-        // Distancias mínimas (inicialmente infinito)
         Map<String, Integer> distancias = new HashMap<>();
+        Set<String> visitados = new HashSet<>();
         for (String nodo : grafo.keySet()) {
             distancias.put(nodo, Integer.MAX_VALUE);
         }
         distancias.put(origen, 0);
 
-        // Cola de prioridad (menor distancia primero)
         PriorityQueue<Map.Entry<String, Integer>> cola =
                 new PriorityQueue<>(Map.Entry.comparingByValue);
 
@@ -17,15 +16,18 @@ public class DijkstraExample {
 
         while (!cola.isEmpty()) {
             String nodoActual = cola.poll().getKey();
+            if (visitados.contains(nodoActual)) continue;
+            visitados.add(nodoActual);
 
-            // Revisar vecinos
-            for (Map.Entry<String, Integer> vecino : grafo.get(nodoActual).entrySet()) {
+            Map<String, Integer> vecinos = grafo.get(nodoActual);
+            if (vecinos == null) continue;
+
+            for (Map.Entry<String, Integer> vecino : vecinos.entrySet()) {
                 String nodoVecino = vecino.getKey();
                 int peso = vecino.getValue();
 
                 int nuevaDistancia = distancias.get(nodoActual) + peso;
 
-                // Si encontramos un camino más corto, actualizamos
                 if (nuevaDistancia < distancias.get(nodoVecino)) {
                     distancias.put(nodoVecino, nuevaDistancia);
                     cola.add(new AbstractMap.SimpleEntry<>(nodoVecino, nuevaDistancia));
@@ -37,7 +39,6 @@ public class DijkstraExample {
     }
 
     public static void main(String[] args) {
-        // ----------------- EJEMPLO -----------------
         Map<String, Map<String, Integer>> grafo = new HashMap<>();
 
         grafo.put("A", Map.of("B", 4, "C", 2));
