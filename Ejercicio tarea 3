@@ -8,10 +8,9 @@ public class tarea3 {
             distancias.put(nodo, Integer.MAX_VALUE);
         }
         distancias.put(origen, 0);
-
-        PriorityQueue<Map.Entry<String, Integer>> cola =
-                new PriorityQueue<>(Map.Entry.comparingByValue);
-
+PriorityQueue<Map.Entry<String, Integer>> cola =
+                new PriorityQueue<>(Map.Entry.<String, Integer>comparingByValue());
+                
         cola.add(new AbstractMap.SimpleEntry<>(origen, 0));
 
         while (!cola.isEmpty()) {
