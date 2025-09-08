@@ -65,7 +65,7 @@ class Arbol {
     }
 }
 
-public class Main {
+public class Diagnostico {
     public static void main(String[] args) {
         Arbol arbol = new Arbol();
 
