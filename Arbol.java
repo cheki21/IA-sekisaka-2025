@@ -1,0 +1,110 @@
+package tarea4;
+
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Set;
+import java.util.Stack;
+
+public class Arbol {
+
+    // 1. Primero en anchura (BFS)
+    public static Nodo bfs(String estadoInicial, String estadoObjetivo) {
+        Nodo raiz = new Nodo(estadoInicial, null);
+        Queue<Nodo> frontera = new LinkedList<>();
+        Set<String> explorados = new HashSet<>();
+        frontera.add(raiz);
+
+        while (!frontera.isEmpty()) {
+            Nodo actual = frontera.poll();
+            if (actual.estado.equals(estadoObjetivo)) return actual;
+            explorados.add(actual.estado);
+
+            for (String sucesor : actual.obtenerSucesores()) {
+                if (!explorados.contains(sucesor)) {
+                    frontera.add(new Nodo(sucesor, actual));
+                }
+            }
+        }
+        return null;
+    }
+
+    // 2. Costo uniforme (UCS)
+    public static Nodo ucs(String estadoInicial, String estadoObjetivo) {
+        Nodo raiz = new Nodo(estadoInicial, null);
+        PriorityQueue<Nodo> frontera = new PriorityQueue<>(Comparator.comparingInt(n -> n.costo));
+        Set<String> explorados = new HashSet<>();
+        raiz.costo = 0;
+        frontera.add(raiz);
+
+        while (!frontera.isEmpty()) {
+            Nodo actual = frontera.poll();
+            if (actual.estado.equals(estadoObjetivo)) return actual;
+            explorados.add(actual.estado);
+
+            for (String sucesor : actual.obtenerSucesores()) {
+                if (!explorados.contains(sucesor)) {
+                    Nodo hijo = new Nodo(sucesor, actual);
+                    hijo.costo = actual.costo + 1; // Asume costo uniforme de 1
+                    frontera.add(hijo);
+                }
+            }
+        }
+        return null;
+    }
+
+    // 3. Primero en profundidad (DFS)
+    public static Nodo dfs(String estadoInicial, String estadoObjetivo) {
+        Nodo raiz = new Nodo(estadoInicial, null);
+        Stack<Nodo> frontera = new Stack<>();
+        Set<String> explorados = new HashSet<>();
+        frontera.push(raiz);
+
+        while (!frontera.isEmpty()) {
+            Nodo actual = frontera.pop();
+            if (actual.estado.equals(estadoObjetivo)) return actual;
+            explorados.add(actual.estado);
+
+            for (String sucesor : actual.obtenerSucesores()) {
+                if (!explorados.contains(sucesor)) {
+                    frontera.push(new Nodo(sucesor, actual));
+                }
+            }
+        }
+        return null;
+    }
+
+    // 4. Profundidad limitada (DLS)
+    public static Nodo dls(String estadoInicial, String estadoObjetivo, int limite) {
+        Nodo raiz = new Nodo(estadoInicial, null);
+        return dlsRecursivo(raiz, estadoObjetivo, limite, new HashSet<>());
+    }
+
+    private static Nodo dlsRecursivo(Nodo actual, String objetivo, int limite, Set<String> explorados) {
+        if (actual.estado.equals(objetivo)) return actual;
+        if (limite == 0) return null;
+        explorados.add(actual.estado);
+
+        for (String sucesor : actual.obtenerSucesores()) {
+            if (!explorados.contains(sucesor)) {
+                Nodo hijo = new Nodo(sucesor, actual);
+                Nodo resultado = dlsRecursivo(hijo, objetivo, limite - 1, explorados);
+                if (resultado != null) return resultado;
+            }
+        }
+        return null;
+    }
+
+    // 5. Profundidad iterativa (IDDFS)
+    public static Nodo iddfs(String estadoInicial, String estadoObjetivo, int limiteMaximo) {
+        for (int limite = 0; limite <= limiteMaximo; limite++) {
+            Nodo resultado = dls(estadoInicial, estadoObjetivo, limite);
+            if (resultado != null) {
+                return resultado;
+            }
+        }
+        return null;
+    }
+}
