@@ -1,0 +1,56 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn import svm
+from sklearn.datasets import make_circles
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+
+def entrenar_svm_rbf():
+ 
+    X, y = make_circles(n_samples=500, noise=0.1, factor=0.4, random_state=42)
+
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=42
+    )
+   
+    modelo = svm.SVC(kernel="rbf", gamma="scale", C=1)
+    modelo.fit(X_train, y_train)
+    y_pred = modelo.predict(X_test)
+    precision = accuracy_score(y_test, y_pred)
+    print("Precisión del modelo:", precision)
+    return modelo, X, y
+
+
+def graficar_resultados(modelo, X, y):
+    plt.figure(figsize=(6, 6))
+    plt.scatter(X[:, 0], X[:, 1], c=y, cmap="coolwarm", edgecolors="k")
+    plt.title("Datos originales (make_circles)")
+    plt.show()
+
+    h = 0.02  
+    x_min, x_max = X[:, 0].min() - 1, X[:, 0].max() + 1
+    y_min, y_max = X[:, 1].min() - 1, X[:, 1].max() + 1
+
+    xx, yy = np.meshgrid(
+        np.arange(x_min, x_max, h),
+        np.arange(y_min, y_max, h)
+    )
+
+    Z = modelo.predict(np.c_[xx.ravel(), yy.ravel()])
+    Z = Z.reshape(xx.shape)
+
+    plt.figure(figsize=(6, 6))
+    plt.contourf(xx, yy, Z, cmap="coolwarm", alpha=0.6)
+    plt.scatter(X[:, 0], X[:, 1], c=y, cmap="coolwarm", edgecolors="k")
+    plt.title("Clasificación usando SVM con kernel RBF")
+    plt.show()
+
+
+def main():
+    modelo, X, y = entrenar_svm_rbf()
+    graficar_resultados(modelo, X, y)
+
+
+if __name__ == "__main__":
+    main()
